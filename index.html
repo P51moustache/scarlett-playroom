@@ -277,6 +277,7 @@ h1 small{display:block;font-size:.55em;color:var(--purple)}
 <canvas id="fx"></canvas>
 
 <script src="offline.js"></script>
+<script src="fullscreen.js"></script>
 <script>
 /* =========================================================
    Family photos and videos live in the "family" folder next to
@@ -297,6 +298,8 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;"
 const STAR = '<polygon points="0,-13 3.2,-4.4 12.4,-4 5.2,1.7 7.6,10.5 0,5.4 -7.6,10.5 -5.2,1.7 -12.4,-4 -3.2,-4.4" stroke-linejoin="round"/>';
 const HOUSE = '<svg viewBox="0 0 40 40"><path d="M6 19 20 7l14 12" fill="none" stroke="#ff6fae" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 17v15a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V17" fill="#ffd84d" stroke="#3a2d5c" stroke-width="3" stroke-linejoin="round"/><rect x="17" y="24" width="7" height="10" rx="2" fill="#ff6fae"/></svg>';
 const offline = new PlayroomOffline({ status: $("#offlineStatus"), serviceWorkers: navigator.serviceWorker, pageUrl: location.href });
+const fullscreen = new PlayroomFullscreen({ document, landscape: matchMedia("(orientation: landscape)"), activation: navigator.userActivation });
+fullscreen.start();
 
 /* ---------- sample pictures (temporary) ---------- */
 const SAMPLES = [

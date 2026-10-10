@@ -1,10 +1,10 @@
 /* Cache only this playroom. Family entries remain encrypted on disk. */
-const VERSION = 'bc7462f56db35b64';
+const VERSION = '5619d078356ff8b4';
 const ROOT = new URL('./', self.location.href);
 const CACHE_PREFIX = 'scarlett-playroom-' + encodeURIComponent(ROOT.pathname) + '-';
 const CORE_CACHE = CACHE_PREFIX + 'core-' + VERSION;
 const FAMILY_CACHE = CACHE_PREFIX + 'family-v1';
-const CORE_FILES = ['index.html', 'icon.png', 'offline.js'];
+const CORE_FILES = ['index.html', 'icon.png', 'offline.js', 'fullscreen.js'];
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
