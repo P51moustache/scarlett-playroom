@@ -58,6 +58,8 @@ h1 small{display:block;font-size:.55em;color:var(--purple)}
 .tile .ic svg{width:100%;height:100%}
 @keyframes wiggle{0%,86%,100%{transform:rotate(0)}89%{transform:rotate(-3deg)}92%{transform:rotate(3deg)}95%{transform:rotate(-2deg)}}
 .note{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);background:rgba(255,255,255,.85);border-radius:999px;padding:4px 14px;font-size:13px;color:#6b5f8a;white-space:nowrap;z-index:2}
+.offline-status{position:absolute;top:8px;left:50%;transform:translateX(-50%);max-width:92vw;border-radius:999px;padding:4px 12px;font:12px/1.4 system-ui,sans-serif;background:rgba(255,255,255,.85);color:#6b5f8a;text-align:center;z-index:2;pointer-events:none}
+.offline-status[data-state="ready"]{color:#21653b;background:#effaf4}
 
 /* ---------- top bar ---------- */
 .top{display:flex;align-items:center;gap:12px;padding:12px 16px 4px;min-height:84px}
@@ -162,6 +164,7 @@ h1 small{display:block;font-size:.55em;color:var(--purple)}
 
 <!-- HOME -->
 <section id="home" class="screen on">
+  <div class="offline-status" id="offlineStatus" role="status">Preparing offline play…</div>
   <div class="hero">
     <button id="sunBtn" aria-label="Hello">
       <svg class="sun" viewBox="0 0 120 120" aria-hidden="true">
@@ -273,6 +276,7 @@ h1 small{display:block;font-size:.55em;color:var(--purple)}
 
 <canvas id="fx"></canvas>
 
+<script src="offline.js"></script>
 <script>
 /* =========================================================
    Family photos and videos live in the "family" folder next to
@@ -292,6 +296,7 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const STAR = '<polygon points="0,-13 3.2,-4.4 12.4,-4 5.2,1.7 7.6,10.5 0,5.4 -7.6,10.5 -5.2,1.7 -12.4,-4 -3.2,-4.4" stroke-linejoin="round"/>';
 const HOUSE = '<svg viewBox="0 0 40 40"><path d="M6 19 20 7l14 12" fill="none" stroke="#ff6fae" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 17v15a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V17" fill="#ffd84d" stroke="#3a2d5c" stroke-width="3" stroke-linejoin="round"/><rect x="17" y="24" width="7" height="10" rx="2" fill="#ff6fae"/></svg>';
+const offline = new PlayroomOffline({ status: $("#offlineStatus"), serviceWorkers: navigator.serviceWorker, pageUrl: location.href });
 
 /* ---------- sample pictures (temporary) ---------- */
 const SAMPLES = [
@@ -352,6 +357,7 @@ async function unlock(code) {
   }
   if (photos.length) { PHOTOS = photos; $("#sampleNote").hidden = true; }
   VIDEOS = videos;
+  offline.includeFamily(list);
   return true;
 }
 const familyReady = (async () => {
@@ -365,6 +371,7 @@ const familyReady = (async () => {
   if (code && await unlock(code).catch(() => false)) return;
   $("#lockBtn").hidden = false;
 })();
+familyReady.finally(() => offline.save());
 
 /* ---------- sound (made in the browser, no files) ---------- */
 let AC = null;
